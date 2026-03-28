@@ -5,14 +5,14 @@ import service.PagamentoService;
 
 public class PagamentoController {
 
-    private PagamentoService service = PagamentoService.getInstance();
+    private PagamentoService service = new PagamentoService();
 
     public Pagamento criarPagamento(int pedidoId, double valor) {
         return service.gerarBoleto(pedidoId, valor);
     }
 
-    public void processarPagamento(Pagamento pagamento, boolean pago) {
-        service.verificarPagamento(pagamento, pago);
+    public void processarPagamento(Pagamento pagamento) {
+        service.processarPagamento(pagamento);
     }
 
     public void finalizarPagamento(Pagamento pagamento) {
