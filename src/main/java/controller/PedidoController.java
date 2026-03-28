@@ -5,7 +5,7 @@ import service.PedidoService;
 
 public class PedidoController {
 
-    private PedidoService service = PedidoService.getInstance();
+    private PedidoService service = new PedidoService();
 
     public Pedido criarPedido(int clienteId) {
         return service.criarPedido(clienteId);
