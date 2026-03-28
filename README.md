@@ -1,6 +1,6 @@
 # LojinhaOnline — AgroTech
 
-Projeto de simulacao de uma lojinha online feito em Java para a disciplina de Sistemas Distribuidos.
+Projeto de simulação de uma lojinha online feito em Java para a disciplina de Arquitetura de Software.
 O sistema simula o fluxo completo de uma compra: desde a identificacao do cliente ate o processamento do pagamento.
 
 ---
