@@ -1,34 +1,31 @@
 package service;
 
-import model.Pedido;
-import java.time.LocalDateTime;
+import model.Produto;
+import repository.MockDatabase;
+import java.util.List;
 
-public class PedidoService {
+public class ProdutoService {
 
-    public Pedido criarPedido(int clienteId) {
-        Pedido pedido = new Pedido();
-        pedido.setIdPedido((int) (Math.random() * 1000));
-        pedido.setClienteId(clienteId);
-        pedido.setData(LocalDateTime.now());
-        pedido.setStatus("CRIADO");
-
-        System.out.println("Pedido criado para o cliente " + clienteId);
-
-        return pedido;
+    public List<Produto> listarProdutos() {
+        return MockDatabase.produtos;
     }
 
-    public void atualizarStatus(Pedido pedido, String status) {
-        pedido.setStatus(status);
-        System.out.println("Status do pedido atualizado para: " + status);
+    public Produto buscarPorId(int id) {
+        return MockDatabase.buscarProduto(id);
     }
 
-    public void confirmarPedido(Pedido pedido) {
-        pedido.setStatus("CONFIRMADO");
-        System.out.println("Pedido confirmado!");
-    }
-
-    public void cancelarPedido(Pedido pedido) {
-        pedido.setStatus("CANCELADO");
-        System.out.println("Pedido cancelado!");
+    public boolean reduzirEstoque(int id, int quantidade) {
+        Produto produto = MockDatabase.buscarProduto(id);
+        if (produto == null) {
+            System.out.println("Produto não encontrado.");
+            return false;
+        }
+        if (produto.getEstoque() < quantidade) {
+            System.out.println("Estoque insuficiente para: " + produto.getNome());
+            return false;
+        }
+        produto.reduzirEstoque(quantidade);
+        System.out.println("Estoque atualizado. Novo estoque de '" + produto.getNome() + "': " + produto.getEstoque());
+        return true;
     }
 }
