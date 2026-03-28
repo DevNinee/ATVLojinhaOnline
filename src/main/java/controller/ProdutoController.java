@@ -16,7 +16,8 @@ public class ProdutoController {
         return service.buscarPorId(id);
     }
 
-    public void reduzirEstoque(int id, int quantidade) {
-        service.reduzirEstoque(id, quantidade);
+    public boolean reduzirEstoque(int id, int quantidade) {
+        return service.reduzirEstoque(id, quantidade);
     }
+
 }
