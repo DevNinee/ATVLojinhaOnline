@@ -1,108 +1,86 @@
 package controller;
 
-import model.Cliente;
-import model.ItemPedido;
-import model.Pagamento;
-import model.Pedido;
-import model.Produto;
+import model.*;
 
-import java.util.ArrayList;
-import java.util.List;
-
-/**
- * LojaAgroTechAPI — Ponto de entrada da simulação do sistema de lojinha online.
- *
- * Arquitetura: cliente-servidor monolítica.
- * Todas as funcionalidades do backend estão concentradas nesta aplicação servidora.
- * A comunicação com o sistema externo de pagamento é feita via Singleton (PaymentGateway).
- */
 public class LojaAgroTechAPI {
 
     public static void main(String[] args) {
-        System.out.println("=== LOJA AGROTECH — SIMULAÇÃO DO SISTEMA ===\n");
 
-        ClienteController clienteController     = new ClienteController();
-        ProdutoController produtoController     = new ProdutoController();
-        PedidoController  pedidoController      = new PedidoController();
+        ClienteController clienteController = new ClienteController();
+        ProdutoController produtoController = new ProdutoController();
+        PedidoController pedidoController = new PedidoController();
         PagamentoController pagamentoController = new PagamentoController();
-
-        // ─────────────────────────────────────────────
-        // 1. IDENTIFICAÇÃO DO CLIENTE
-        // ─────────────────────────────────────────────
-        System.out.println("--- PASSO 1: IDENTIFICAÇÃO DO CLIENTE ---");
-        int clienteId = 1;
-        Cliente cliente = clienteController.buscar(clienteId);
+        
+        // identificação do cliente
+        Cliente cliente = clienteController.buscar(1);
 
         if (cliente == null) {
-            System.out.println("Cliente não encontrado. Encerrando.");
-            return;
-        }
-        System.out.println("Cliente identificado: " + cliente.getNome() + " <" + cliente.getEmail() + ">\n");
-
-        // ─────────────────────────────────────────────
-        // 2. LISTAGEM DE PRODUTOS
-        // ─────────────────────────────────────────────
-        System.out.println("--- PASSO 2: LISTAGEM DE PRODUTOS ---");
-        List<Produto> catalogo = produtoController.listar();
-        for (Produto p : catalogo) {
-            System.out.printf("  [%d] %-30s R$ %,.2f  |  Estoque: %d%n",
-                    p.getIdProduto(), p.getNome(), p.getPreco(), p.getEstoque());
-        }
-        System.out.println();
-
-        // ─────────────────────────────────────────────
-        // 3. SELEÇÃO DE PRODUTO COM ESTOQUE INDISPONÍVEL
-        // ─────────────────────────────────────────────
-        System.out.println("--- PASSO 3: TENTATIVA DE COMPRA — PRODUTO SEM ESTOQUE (Drone de Pulverização) ---");
-        boolean droneDisponivel = produtoController.reduzirEstoque(102, 1);
-        if (!droneDisponivel) {
-            System.out.println("Produto sem estoque. Cliente deve selecionar outro produto.\n");
-        }
-
-        // ─────────────────────────────────────────────
-        // 4. CRIAÇÃO DO PEDIDO COM PRODUTO DISPONÍVEL
-        // ─────────────────────────────────────────────
-        System.out.println("--- PASSO 4: CRIAÇÃO DO PEDIDO — Sensor de Umidade IoT ---");
-        Pedido pedido = pedidoController.criarPedido(clienteId);
-
-        List<ItemPedido> itens = new ArrayList<>();
-        Produto sensor = produtoController.buscar(101);
-        int quantidade = 2;
-
-        boolean reservado = produtoController.reduzirEstoque(sensor.getIdProduto(), quantidade);
-        if (!reservado) {
-            System.out.println("Estoque insuficiente para o sensor. Encerrando pedido.");
-            pedidoController.cancelar(pedido);
+            System.out.println("Cliente não encontrado!");
             return;
         }
 
-        ItemPedido item = new ItemPedido(1, quantidade, sensor);
-        itens.add(item);
+        System.out.println("Cliente identificado: " + cliente.getNome());
+        
+        // lista de produtos
+        System.out.println("\nProdutos disponíveis:");
 
-        double total = itens.stream().mapToDouble(ItemPedido::getSubtotal).sum();
-        System.out.printf("  Item: %s x%d — Subtotal: R$ %,.2f%n", sensor.getNome(), quantidade, total);
-        System.out.printf("  Total do pedido: R$ %,.2f%n%n", total);
+        for (Produto p : produtoController.listar()) {
+            System.out.println(
+                    p.getIdProduto() + " - " +
+                            p.getNome() + " | R$ " +
+                            p.getPreco() + " | Estoque: " +
+                            p.getEstoque()
+            );
+        }
 
-        // ─────────────────────────────────────────────
-        // 5. PROCESSAMENTO DE PAGAMENTO (via Singleton)
-        // ─────────────────────────────────────────────
-        System.out.println("--- PASSO 5: PROCESSAMENTO DE PAGAMENTO ---");
-        Pagamento pagamento = pagamentoController.criarPagamento(pedido.getIdPedido(), total);
+        //seleção de produtos
+        
+        int idProdutoEscolhido = 101;
+        Produto produto = produtoController.buscar(idProdutoEscolhido);
+
+        if (produto == null) {
+            System.out.println("Produto não encontrado!");
+            return;
+        }
+
+        if (produto.getEstoque() <= 0) {
+            System.out.println("Produto sem estoque!");
+            return;
+        }
+
+        System.out.println("\nProduto selecionado: " + produto.getNome());
+
+        
+        // criar pedido
+        
+        Pedido pedido = pedidoController.criarPedido(cliente.getIdCliente());
+
+        System.out.println("Pedido criado com ID: " + pedido.getIdPedido());
+
+        // processar o pagamento
+        
+        Pagamento pagamento = pagamentoController.criarPagamento(
+                pedido.getIdPedido(),
+                produto.getPreco()
+        );
+
         pagamentoController.processarPagamento(pagamento);
 
-        // ─────────────────────────────────────────────
-        // 6. CONFIRMAÇÃO OU FALHA
-        // ─────────────────────────────────────────────
-        System.out.println("\n--- PASSO 6: RESULTADO FINAL ---");
+        
+        // finalização da compra
+        
         if ("PAGO".equals(pagamento.getStatus())) {
-            pedidoController.confirmar(pedido);
-            pagamentoController.finalizarPagamento(pagamento);
-            System.out.println("✓ Pedido #" + pedido.getIdPedido() + " finalizado com sucesso!");
-        } else {
-            pedidoController.cancelar(pedido);
-            System.out.println("✗ Pedido #" + pedido.getIdPedido() + " cancelado por falha no pagamento.");
-        }
 
-        System.out.println("\n=== FIM DA SIMULAÇÃO ===");
+            produtoController.reduzirEstoque(produto.getIdProduto(), 1);
+            pedidoController.confirmar(pedido);
+
+            System.out.println("\nCompra finalizada com sucesso!");
+
+        } else {
+
+            pedidoController.cancelar(pedido);
+
+            System.out.println("\nCompra não realizada.");
+        }
     }
 }
