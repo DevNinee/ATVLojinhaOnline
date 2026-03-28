@@ -66,6 +66,13 @@ Todo o sistema roda em uma unica aplicacao. Nao ha separacao em microsservicos o
 ### Por que tem dados fixos?
 Os clientes e produtos sao criados diretamente no codigo (no arquivo `MockDatabase.java`), sem banco de dados real. Isso simplifica a simulacao e atende ao requisito de "clientes cadastrados estaticamente".
 
+### Separação por Camadas
+O projeto adota uma estrutura inspirada no padrão Layered Architecture, garantindo:
+
+1. Baixo acoplamento entre módulos
+2. Maior clareza na organização do código
+3. Facilidade de evolução futura para APIs ou microsserviços
+
 ---
 
 ## O padrao Singleton
