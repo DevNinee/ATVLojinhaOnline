@@ -40,6 +40,7 @@ O resultado do pagamento e aleatorio (70% de chance de aprovacao), entao e norma
 
 ## Estrutura de pastas
 
+O projeto segue uma arquitetura em camadas, separando responsabilidades entre controle, regras de negócio, persistência e entidades.
 ```
 ATVLojinhaOnline/
 ├── docs/
