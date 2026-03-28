@@ -4,16 +4,7 @@ import model.Pagamento;
 
 public class PagamentoService {
 
-    private static PagamentoService instancia;
-
-    private PagamentoService() {}
-
-    public static PagamentoService getInstance() {
-        if (instancia == null) {
-            instancia = new PagamentoService();
-        }
-        return instancia;
-    }
+    private PaymentGateway gateway = PaymentGateway.getInstance();
 
     public Pagamento gerarBoleto(int pedidoId, double valor) {
         Pagamento pagamento = new Pagamento();
@@ -26,7 +17,9 @@ public class PagamentoService {
         return pagamento;
     }
 
-    public void verificarPagamento(Pagamento pagamento, boolean pago) {
+    public void processarPagamento(Pagamento pagamento) {
+        boolean pago = gateway.processarPagamento(pagamento.getValor());
+
         if (pago) {
             pagamento.setStatus("PAGO");
             System.out.println("Pagamento aprovado");
