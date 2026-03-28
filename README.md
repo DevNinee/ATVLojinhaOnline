@@ -4,11 +4,16 @@ Projeto de simulação de uma lojinha online feito em Java para a disciplina de 
 O sistema simula o fluxo completo de uma compra: desde a identificacao do cliente ate o processamento do pagamento.
 
 ---
+Contribuições
+Camile Eduarda - Construção de fluxo.
+Fabiana - Criação do UML 
+Erick Ferreira - Aprimoramento de simulação e testes finais.
+Fernanda - Criação do DER.
+Emanoel - Estrutura e revisão de Readme.
 
 ## Como rodar o projeto
 
 Voce precisa ter o Java JDK 11 ou superior instalado.
-
 Abra o terminal dentro da pasta `ATVLojinhaOnline` e execute os dois comandos abaixo:
 
 ```bash
