@@ -4,12 +4,14 @@ Projeto de simulação de uma lojinha online feito em Java para a disciplina de 
 O sistema simula o fluxo completo de uma compra: desde a identificacao do cliente ate o processamento do pagamento.
 
 ---
-Contribuições
-Camile Eduarda - Construção de fluxo.
-Fabiana - Criação do UML 
-Erick Ferreira - Aprimoramento de simulação e testes finais.
-Fernanda - Criação do DER.
-Emanoel - Estrutura e revisão de Readme.
+## Integrantes do Grupo
+
+1. Camile Eduarda - Construção de fluxo da Lojinha
+2. Fabiana - Criação do UML
+3. Erick Ferreira - Aprimoramento de simulação e testes finais
+4. Fernanda - Criação do DER
+5. Emanoel - Estrutura e revisão de Readme
+
 
 ## Como rodar o projeto
 
